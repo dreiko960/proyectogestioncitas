@@ -13,6 +13,8 @@ class Payment extends Model
 {
     use HasUuids;
 
+    protected $table = 'pagos';
+
     public const UPDATED_AT = null;
 
     protected $fillable = [

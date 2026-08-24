@@ -15,13 +15,13 @@ class StoreAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'doctorId' => ['required', 'uuid', 'exists:doctors,id'],
-            'specialtyId' => ['required', 'uuid', 'exists:specialties,id'],
+            'doctorId' => ['required', 'uuid', 'exists:doctores,id'],
+            'specialtyId' => ['required', 'uuid', 'exists:especialidades,id'],
             'date' => ['required', 'date', 'date_format:Y-m-d'],
             'time' => ['required', 'date_format:H:i'],
             'duration' => ['sometimes', 'integer', 'in:15,30,45,60'],
             'reason' => ['sometimes', 'nullable', 'string', 'max:500'],
-            'patientId' => ['sometimes', 'required', 'uuid', 'exists:patients,id'],
+            'patientId' => ['sometimes', 'required', 'uuid', 'exists:pacientes,id'],
             'payOnline' => ['sometimes', 'array'],
             'payOnline.type' => ['required_with:payOnline', Rule::in(['adelanto', 'total'])],
             'payOnline.culqiToken' => ['required_with:payOnline', 'string'],

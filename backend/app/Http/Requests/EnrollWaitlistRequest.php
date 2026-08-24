@@ -14,8 +14,8 @@ class EnrollWaitlistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'specialtyId' => ['required', 'uuid', 'exists:specialties,id'],
-            'doctorId' => ['required', 'uuid', 'exists:doctors,id'],
+            'specialtyId' => ['required', 'uuid', 'exists:especialidades,id'],
+            'doctorId' => ['required', 'uuid', 'exists:doctores,id'],
             'preferred' => ['sometimes', 'nullable', 'string', 'max:160'],
         ];
     }

@@ -10,7 +10,7 @@ class AppointmentStatusLog extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'appointment_status_history';
+    protected $table = 'historial_estados_cita';
 
     protected $fillable = [
         'appointment_id',

@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: sgcm_cmas
+      POSTGRES_DB: GestionCitasdb
       POSTGRES_USER: cmas
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "5432:5432"
     volumes:
@@ -36,9 +36,9 @@ services:
       APP_KEY: ${APP_KEY}
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_DATABASE: sgcm_cmas
+      DB_DATABASE: GestionCitasdb
       DB_USERNAME: cmas
-      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       CACHE_STORE: redis
@@ -61,9 +61,9 @@ services:
       APP_ENV: local
       APP_KEY: ${APP_KEY}
       DB_HOST: postgres
-      DB_DATABASE: sgcm_cmas
+      DB_DATABASE: GestionCitasdb
       DB_USERNAME: cmas
-      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
       REDIS_HOST: redis
       QUEUE_CONNECTION: redis
     depends_on:
@@ -77,9 +77,9 @@ services:
       APP_ENV: local
       APP_KEY: ${APP_KEY}
       DB_HOST: postgres
-      DB_DATABASE: sgcm_cmas
+      DB_DATABASE: GestionCitasdb
       DB_USERNAME: cmas
-      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
       REDIS_HOST: redis
       QUEUE_CONNECTION: redis
     depends_on:
@@ -93,9 +93,9 @@ services:
       APP_ENV: local
       APP_KEY: ${APP_KEY}
       DB_HOST: postgres
-      DB_DATABASE: sgcm_cmas
+      DB_DATABASE: GestionCitasdb
       DB_USERNAME: cmas
-      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
       REDIS_HOST: redis
       QUEUE_CONNECTION: redis
     depends_on:
@@ -111,9 +111,9 @@ services:
       APP_ENV: local
       APP_KEY: ${APP_KEY}
       DB_HOST: postgres
-      DB_DATABASE: sgcm_cmas
+      DB_DATABASE: GestionCitasdb
       DB_USERNAME: cmas
-      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_PASSWORD: ${DB_PASSWORD:-root}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       BROADCAST_CONNECTION: reverb

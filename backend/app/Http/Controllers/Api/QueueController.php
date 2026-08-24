@@ -12,12 +12,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
-/** Cola del día (recepción/enfermería) + pantalla TV (BACKEND.md §5.8). */
+
 class QueueController extends ApiController
 {
     public function __construct(private readonly AppointmentService $appointments) {}
 
-    /** POST /api/tv/token · emite token de solo lectura para la pantalla (clave de consultorio). */
+    
     public function tvToken(Request $request): JsonResponse
     {
         $key = $request->input('key');
@@ -38,7 +38,7 @@ class QueueController extends ApiController
         ]);
     }
 
-    /** GET /api/queue/day?date= · pipeline ordenada por turno + stats en vivo. */
+    
     public function day(Request $request): JsonResponse
     {
         if (! $this->authorizeTv($request)) {
@@ -63,7 +63,7 @@ class QueueController extends ApiController
         ]);
     }
 
-    /** POST /api/queue/{id}/send-triage · check-in presencial → turno + en_espera_triaje. */
+    
     public function sendTriage(Request $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -79,7 +79,7 @@ class QueueController extends ApiController
         return $this->success($this->payload($appointment->fresh(['patient.user', 'doctor.user'])));
     }
 
-    /** POST /api/queue/{id}/call-triage → en_triaje. */
+    
     public function callTriage(Request $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -95,7 +95,7 @@ class QueueController extends ApiController
         return $this->success($this->payload($appointment->fresh(['patient.user', 'doctor.user'])));
     }
 
-    /** POST /api/queue/{id}/finish-triage → triaje_completado (variante desde el tablero). */
+    
     public function finishTriage(Request $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -111,7 +111,7 @@ class QueueController extends ApiController
         return $this->success($this->payload($appointment->fresh(['patient.user', 'doctor.user'])));
     }
 
-    /** POST /api/queue/{id}/call-consult → en_atencion. */
+    
     public function callConsult(Request $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -127,7 +127,7 @@ class QueueController extends ApiController
         return $this->success($this->payload($appointment->fresh(['patient.user', 'doctor.user'])));
     }
 
-    /** POST /api/queue/{id}/attended → atendida (sale de la cola). */
+    
     public function attended(Request $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -143,7 +143,7 @@ class QueueController extends ApiController
         return $this->success($this->payload($appointment->fresh(['patient.user', 'doctor.user'])));
     }
 
-    /** GET /api/queue/stats-today · contadores para el header de la TV. */
+    
     public function statsToday(Request $request): JsonResponse
     {
         if (! $this->authorizeTv($request)) {
@@ -180,7 +180,7 @@ class QueueController extends ApiController
         return $appointment;
     }
 
-    /** Auth de staff O token de TV (solo lectura). */
+    
     private function authorizeTv(Request $request): bool
     {
         $user = $request->user();

@@ -14,12 +14,7 @@ use App\Support\Codes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-/**
- * Pagos (caja + Culqi). BACKEND.md §5.6 y §6.2:
- * - adelanto (50%): round(price/2) → cita pagada (paid_type=adelanto); saldo en recepción.
- * - total (100%): pago completo.
- * - métodos declarados por el paciente (yape/plin/transferencia) → pendiente_verificacion.
- */
+
 class PaymentService
 {
     public function __construct(
@@ -27,7 +22,7 @@ class PaymentService
         private readonly AuditService $audit,
     ) {}
 
-    /** Cobro en línea (Culqi) al reservar o desde la ficha de la cita. */
+    
     public function chargeAppointment(Appointment $appointment, PaidType $type, string $culqiToken, ?User $by = null): Payment
     {
         return DB::transaction(function () use ($appointment, $type, $culqiToken, $by) {
@@ -37,7 +32,7 @@ class PaymentService
 
             $payment = Payment::create([
                 'id' => Str::uuid()->toString(),
-                'code' => Codes::next('payments', 'P'),
+                'code' => Codes::next('pagos', 'P'),
                 'appointment_id' => $appointment->id,
                 'patient_id' => $appointment->patient_id,
                 'amount' => $amount,
@@ -59,7 +54,7 @@ class PaymentService
         });
     }
 
-    /** Cobro en caja: efectivo/Yape/Plin/transferencia → comprobante R-2026-XXXX. */
+    
     public function cash(Appointment $appointment, PaymentMethod $method, ?PaidType $type = null, ?User $by = null, ?float $amountOverride = null): Payment
     {
         $type ??= $this->currentPaidType($appointment);
@@ -68,14 +63,14 @@ class PaymentService
             $amount = $amountOverride ?? $this->amountFor($appointment, $type);
             $payment = Payment::create([
                 'id' => Str::uuid()->toString(),
-                'code' => Codes::next('payments', 'P'),
+                'code' => Codes::next('pagos', 'P'),
                 'appointment_id' => $appointment->id,
                 'patient_id' => $appointment->patient_id,
                 'amount' => $amount,
                 'method' => $method,
                 'status' => PaymentStatus::Pagado,
                 'paid_type' => $type,
-                'receipt_code' => Codes::next('payments', 'R-'.now()->format('Y'), 'receipt_code'),
+                'receipt_code' => Codes::next('pagos', 'R-'.now()->format('Y'), 'receipt_code'),
                 'verified_by' => $by?->id,
             ]);
 
@@ -89,14 +84,14 @@ class PaymentService
         });
     }
 
-    /** Pago declarado por el paciente (yape/plin/transferencia) → pendiente de verificación. */
+    
     public function declared(Appointment $appointment, PaymentMethod $method, ?PaidType $type = null): Payment
     {
         $type ??= $this->currentPaidType($appointment);
 
         return Payment::create([
             'id' => Str::uuid()->toString(),
-            'code' => Codes::next('payments', 'P'),
+            'code' => Codes::next('pagos', 'P'),
             'appointment_id' => $appointment->id,
             'patient_id' => $appointment->patient_id,
             'amount' => $this->amountFor($appointment, $type),
@@ -106,7 +101,7 @@ class PaymentService
         ]);
     }
 
-    /** Recepción confirma un pago pendiente (<15 min, BACKEND.md §6.2). */
+    
     public function verify(Payment $payment, ?User $by = null): Payment
     {
         if ($payment->status !== PaymentStatus::PendienteVerificacion) {
@@ -117,7 +112,7 @@ class PaymentService
             $payment->update([
                 'status' => PaymentStatus::Pagado,
                 'verified_by' => $by?->id,
-                'receipt_code' => Codes::next('payments', 'R-'.now()->format('Y'), 'receipt_code'),
+                'receipt_code' => Codes::next('pagos', 'R-'.now()->format('Y'), 'receipt_code'),
             ]);
 
             $this->markAppointmentPaid($payment->appointment, $payment);
@@ -128,7 +123,7 @@ class PaymentService
         });
     }
 
-    /** Cobra el saldo de un adelanto del 50% → la cita pasa a paid_type=total. */
+    
     public function completeBalance(Appointment $appointment, PaymentMethod $method, ?User $by = null): Payment
     {
         if ($appointment->paid_type !== PaidType::Adelanto) {
@@ -143,7 +138,7 @@ class PaymentService
         return $payment;
     }
 
-    /** Reembolso de un cargo Culqi (BACKEND.md §7.3). */
+    
     public function refund(Payment $payment, ?User $by = null): Payment
     {
         if ($payment->status !== PaymentStatus::Pagado || ! $payment->gateway) {
@@ -164,7 +159,7 @@ class PaymentService
         });
     }
 
-    /** Monto según paid_type (50% redondeado) — misma semántica que Payment.jsx. */
+    
     public function amountFor(Appointment $appointment, PaidType $type): float
     {
         $price = (float) $appointment->specialty->price;
@@ -193,7 +188,7 @@ class PaymentService
         $appointment->save();
     }
 
-    /** ¿La cita tiene saldo pendiente (adelanto)? Para el paciente ver sus cuentas. */
+    
     public function hasPendingBalance(Appointment $appointment): bool
     {
         return $appointment->paid_type === PaidType::Adelanto

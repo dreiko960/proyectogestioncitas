@@ -9,10 +9,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-/** Documentos: historial clínico en PDF (BACKEND.md §5.10). */
+
 class DocumentController extends ApiController
 {
-    /** POST /api/documents/{appointment}/pdf · genera y sube PDF, devuelve URL. */
+    
     public function pdf(Request $request, string $id): JsonResponse
     {
         $appointment = Appointment::with(['patient.user', 'doctor.user', 'specialty', 'diagnosis', 'triage'])->find($id);

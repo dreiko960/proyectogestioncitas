@@ -15,7 +15,7 @@ class ChargePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'appointmentId' => ['required', 'uuid', 'exists:appointments,id'],
+            'appointmentId' => ['required', 'uuid', 'exists:citas,id'],
             'type' => ['required', Rule::in(['adelanto', 'total'])],
             'culqiToken' => ['required', 'string'],
         ];

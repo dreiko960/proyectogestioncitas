@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateConsultorioRequest;
 use App\Models\Consultorio;
 use Illuminate\Http\JsonResponse;
 
-/** Catálogo de consultorios (BACKEND.md §5.3). */
+
 class ConsultorioController extends ApiController
 {
     public function index(): JsonResponse
@@ -52,7 +52,7 @@ class ConsultorioController extends ApiController
             'piso' => $consultorio->piso,
             'area' => $consultorio->area,
             'activo' => $consultorio->activo,
-            'specialtyIds' => $consultorio->specialties()->pluck('specialties.id')->all(),
+            'specialtyIds' => $consultorio->specialties()->pluck('especialidades.id')->all(),
         ];
     }
 }

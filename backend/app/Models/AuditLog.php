@@ -10,7 +10,7 @@ class AuditLog extends Model
 {
     public $timestamps = false;
 
-    protected $table = 'audit_log';
+    protected $table = 'registro_auditoria';
 
     protected $fillable = [
         'at',

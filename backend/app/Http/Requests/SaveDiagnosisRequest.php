@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyPaymentRequest extends FormRequest
+class SaveDiagnosisRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,8 @@ class VerifyPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'paymentId' => ['required', 'uuid', 'exists:pagos,id'],
+            'dx' => ['required', 'string', 'min:5', 'max:2000'],
+            'notes' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ];
     }
 }

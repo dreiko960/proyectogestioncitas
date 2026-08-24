@@ -8,10 +8,12 @@ use App\Exceptions\SlotConflictException;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\CancelAppointmentRequest;
 use App\Http\Requests\RescheduleAppointmentRequest;
+use App\Http\Requests\SaveDiagnosisRequest;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Services\AppointmentService;
+use App\Support\QueueBroadcaster;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,7 +21,7 @@ class AppointmentController extends ApiController
 {
     public function __construct(private readonly AppointmentService $appointments) {}
 
-    /** POST /api/appointments · reserva con transacción (BACKEND.md §5.5). */
+    
     public function store(StoreAppointmentRequest $request): JsonResponse
     {
         $patient = $this->resolvePatient($request);
@@ -40,7 +42,7 @@ class AppointmentController extends ApiController
         return $this->success($this->payload($appointment->load(['patient.user', 'doctor.user', 'specialty', 'payments'])), 201);
     }
 
-    /** GET /api/appointments/me · próximas / pasadas / canceladas. */
+    
     public function me(Request $request): JsonResponse
     {
         $patient = $this->patientOf($request->user());
@@ -76,7 +78,7 @@ class AppointmentController extends ApiController
         ]);
     }
 
-    /** GET /api/appointments/day?date=&specialtyId=&doctorId= · agenda del día. */
+    
     public function day(Request $request): JsonResponse
     {
         $date = $request->query('date', now()->toDateString());
@@ -105,7 +107,7 @@ class AppointmentController extends ApiController
         ]);
     }
 
-    /** GET /api/appointments/{id} · detalle con triage, pagos y diagnóstico. */
+    
     public function show(Request $request, string $id): JsonResponse
     {
         $appointment = Appointment::with(['patient.user', 'doctor.user', 'specialty', 'payments', 'triage', 'diagnosis'])
@@ -122,7 +124,40 @@ class AppointmentController extends ApiController
         return $this->success($this->payload($appointment, true));
     }
 
-    /** POST /api/appointments/{id}/checkin · check-in móvil. */
+    
+    public function diagnosis(SaveDiagnosisRequest $request, string $id): JsonResponse
+    {
+        $appointment = Appointment::with(['patient.user', 'doctor.user', 'specialty', 'payments', 'triage', 'diagnosis'])
+            ->find($id);
+
+        if (! $appointment) {
+            return $this->error('Cita no encontrada', 404);
+        }
+
+        if (! $this->canView($request->user(), $appointment)) {
+            return $this->error('No autorizado', 403);
+        }
+
+        try {
+            $appointment = $this->appointments->saveDiagnosis(
+                $appointment,
+                $request->validated('dx'),
+                $request->validated('notes'),
+                $request->user(),
+            );
+        } catch (\InvalidArgumentException $e) {
+            return $this->error($e->getMessage(), 422);
+        }
+
+        QueueBroadcaster::dispatch($appointment);
+
+        return $this->success(
+            $this->payload($appointment->fresh(['patient.user', 'doctor.user', 'specialty', 'payments', 'triage', 'diagnosis']), true),
+            201,
+        );
+    }
+
+    
     public function checkin(Request $request, string $id): JsonResponse
     {
         $appointment = $this->ownAppointment($request, $id);
@@ -136,7 +171,7 @@ class AppointmentController extends ApiController
         return $this->success($this->payload($appointment->fresh(['doctor.user', 'specialty'])));
     }
 
-    /** PATCH /api/appointments/{id}/cancel · cancela (regla 12 h → warning). */
+    
     public function cancel(CancelAppointmentRequest $request, string $id): JsonResponse
     {
         $appointment = $this->resolveCancellable($request, $id);
@@ -153,7 +188,7 @@ class AppointmentController extends ApiController
         ]);
     }
 
-    /** PATCH /api/appointments/{id}/reschedule · reprograma (valida franja libre). */
+    
     public function reschedule(RescheduleAppointmentRequest $request, string $id): JsonResponse
     {
         $appointment = $this->resolveCancellable($request, $id);
@@ -169,7 +204,7 @@ class AppointmentController extends ApiController
         return $this->success($this->payload($appointment->fresh(['doctor.user', 'specialty'])));
     }
 
-    /** GET /api/appointments/patient/{pid} · historial del paciente (médico). */
+    
     public function patientHistory(Request $request, string $pid): JsonResponse
     {
         $patient = Patient::with('user')->find($pid);
@@ -193,7 +228,7 @@ class AppointmentController extends ApiController
         ]);
     }
 
-    // ---------------------------------------------------------------- helpers
+    
 
     private function resolvePatient(Request $request): Patient
     {

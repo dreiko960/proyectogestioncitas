@@ -15,10 +15,7 @@ use App\Models\WaitlistEntry;
 use App\Support\Codes;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Lista de espera (BACKEND.md §5.9, §6.4).
- * Posición = orden cronológico dentro de (specialty, doctor).
- */
+
 class WaitlistService
 {
     public function __construct(
@@ -28,14 +25,14 @@ class WaitlistService
 
     public function enroll(Patient $patient, string $specialtyId, string $doctorId, ?string $preferred = null): WaitlistEntry
     {
-        $position = DB::table('waitlist_entries')
+        $position = DB::table('lista_espera')
             ->where('specialty_id', $specialtyId)
             ->where('doctor_id', $doctorId)
             ->whereIn('status', [WaitlistStatus::EnEspera->value, WaitlistStatus::Oferta->value])
             ->max('position') ?? 0;
 
         return WaitlistEntry::query()->create([
-            'code' => Codes::next('waitlist_entries', 'WL'),
+            'code' => Codes::next('lista_espera', 'WL'),
             'patient_id' => $patient->id,
             'specialty_id' => $specialtyId,
             'doctor_id' => $doctorId,
@@ -47,7 +44,7 @@ class WaitlistService
         ]);
     }
 
-    /** Worker: asigna cupo al primero en espera (oferta con ventana). */
+    
     public function offer(WaitlistEntry $entry, string $date, string $time): WaitlistEntry
     {
         $this->assertStatus($entry, [WaitlistStatus::EnEspera]);
@@ -67,7 +64,7 @@ class WaitlistService
         return $entry->refresh();
     }
 
-    /** Paciente confirma → crea la cita automáticamente + pago pendiente de verificación. */
+    
     public function confirm(WaitlistEntry $entry, ?User $by = null): Appointment
     {
         $this->assertStatus($entry, [WaitlistStatus::Oferta]);
@@ -92,7 +89,7 @@ class WaitlistService
             );
 
             $appointment->payments()->create([
-                'code' => Codes::next('payments', 'P'),
+                'code' => Codes::next('pagos', 'P'),
                 'patient_id' => $entry->patient_id,
                 'amount' => (float) $entry->specialty->price,
                 'method' => PaymentMethod::Yape,
@@ -115,7 +112,7 @@ class WaitlistService
         return $appointment;
     }
 
-    /** Rechaza la oferta → vuelve a en_espera (o se retira si ya no le interesa). */
+    
     public function reject(WaitlistEntry $entry, ?User $by = null, bool $withdraw = false): WaitlistEntry
     {
         $this->assertStatus($entry, [WaitlistStatus::Oferta]);
@@ -134,7 +131,7 @@ class WaitlistService
         return $entry->refresh();
     }
 
-    /** Worker: oferta expirada → el cupo pasa al siguiente. */
+    
     public function expire(WaitlistEntry $entry): WaitlistEntry
     {
         $this->assertStatus($entry, [WaitlistStatus::Oferta]);
@@ -155,7 +152,7 @@ class WaitlistService
         }
     }
 
-    /** Reordena posiciones de en_espera por fecha de inscripción (§6.4). */
+    
     private function renumber(string $specialtyId, string $doctorId): void
     {
         $entries = WaitlistEntry::query()

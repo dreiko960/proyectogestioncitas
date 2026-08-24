@@ -15,7 +15,7 @@ class CompleteBalanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'appointmentId' => ['required', 'uuid', 'exists:appointments,id'],
+            'appointmentId' => ['required', 'uuid', 'exists:citas,id'],
             'method' => ['required', Rule::in(['efectivo', 'yape', 'plin', 'transferencia'])],
         ];
     }

@@ -12,10 +12,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/** Reportes del panel admin (BACKEND.md §5.10). */
+
 class ReportController extends ApiController
 {
-    /** GET /api/reports/summary?month=Y-m · métricas del Dashboard.jsx. */
+    
     public function summary(Request $request): JsonResponse
     {
         $month = $request->query('month', now()->format('Y-m'));
@@ -45,7 +45,7 @@ class ReportController extends ApiController
         ]);
     }
 
-    /** GET /api/reports/occupancy?from=&to= · ocupación por especialidad + tendencia semanal. */
+    
     public function occupancy(Request $request): JsonResponse
     {
         $from = Carbon::parse($request->query('from', now()->startOfMonth()->toDateString()));
@@ -74,7 +74,7 @@ class ReportController extends ApiController
         ]);
     }
 
-    /** GET /api/reports/export?type=csv · exportación CSV. */
+    
     public function export(Request $request): StreamedResponse
     {
         $from = Carbon::parse($request->query('from', now()->startOfMonth()->toDateString()));

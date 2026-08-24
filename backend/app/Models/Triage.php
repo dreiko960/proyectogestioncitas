@@ -10,6 +10,8 @@ class Triage extends Model
 {
     use HasUuids;
 
+    protected $table = 'triajes';
+
     public $timestamps = false;
 
     protected $fillable = [

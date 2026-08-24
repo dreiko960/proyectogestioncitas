@@ -5,10 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-/**
- * Pasarela Culqi v2 (BACKEND.md §7.1). En local sin CULQI_API_KEY usa un modo
- * simulado (prefijo `mock_`) para que el flujo de pago sea testeable sin credenciales.
- */
+
 class CulqiGateway
 {
     public function configured(): bool

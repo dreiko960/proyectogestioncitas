@@ -11,6 +11,8 @@ class WaitlistEntry extends Model
 {
     use HasUuids;
 
+    protected $table = 'lista_espera';
+
     public $timestamps = false;
 
     protected $fillable = [

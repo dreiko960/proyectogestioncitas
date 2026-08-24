@@ -11,6 +11,8 @@ class Patient extends Model
 {
     use HasUuids;
 
+    protected $table = 'pacientes';
+
     public $timestamps = false;
 
     protected $fillable = [

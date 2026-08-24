@@ -10,6 +10,8 @@ class Diagnosis extends Model
 {
     use HasUuids;
 
+    protected $table = 'diagnosticos';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -10,6 +10,8 @@ class RefreshToken extends Model
 {
     use HasUuids;
 
+    protected $table = 'tokens_refresco';
+
     public $timestamps = false;
 
     protected $fillable = [

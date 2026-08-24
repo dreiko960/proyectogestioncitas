@@ -19,10 +19,10 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'string', 'email', 'max:160', 'unique:users,email'],
+            'email' => ['required', 'string', 'email', 'max:160', 'unique:usuarios,email'],
             'password' => ['required', 'confirmed', Password::min(6)->letters()->numbers()->mixedCase()],
-            'dni' => ['required', 'digits:8', 'unique:patients,dni'],
-            'phone' => ['nullable', 'string', 'digits_between:9,15', 'unique:patients,phone'],
+            'dni' => ['required', 'digits:8', 'unique:pacientes,dni'],
+            'phone' => ['nullable', 'string', 'digits_between:9,15', 'unique:pacientes,phone'],
             'dob' => ['required', 'date', 'before:today'],
             'address' => ['nullable', 'string', 'max:255'],
             'consent_29733' => ['required', 'accepted'],

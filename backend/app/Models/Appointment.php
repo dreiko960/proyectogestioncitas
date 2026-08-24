@@ -15,6 +15,8 @@ class Appointment extends Model
 {
     use HasUuids;
 
+    protected $table = 'citas';
+
     protected $fillable = [
         'id',
         'code',

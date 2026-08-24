@@ -9,6 +9,8 @@ class Setting extends Model
 {
     use HasUuids;
 
+    protected $table = 'configuraciones';
+
     public $timestamps = false;
 
     protected $primaryKey = 'key';

@@ -11,12 +11,12 @@ use App\Services\WaitlistService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Lista de espera del paciente (BACKEND.md §5.9). */
+
 class WaitlistController extends ApiController
 {
     public function __construct(private readonly WaitlistService $waitlist) {}
 
-    /** POST /api/waitlist · inscripción → posición N. */
+    
     public function store(EnrollWaitlistRequest $request): JsonResponse
     {
         $patient = $request->user()->patient;
@@ -31,7 +31,7 @@ class WaitlistController extends ApiController
         return $this->success($this->payload($entry->load(['specialty', 'doctor.user'])), 201);
     }
 
-    /** GET /api/waitlist/me · mis inscripciones con ofertas. */
+    
     public function me(Request $request): JsonResponse
     {
         $entries = WaitlistEntry::with(['specialty', 'doctor.user'])
@@ -42,7 +42,7 @@ class WaitlistController extends ApiController
         return $this->success($entries->map(fn ($e) => $this->payload($e))->all());
     }
 
-    /** POST /api/waitlist/{id}/confirm · confirma oferta → crea la cita. */
+    
     public function confirm(Request $request, string $id): JsonResponse
     {
         $entry = $this->own($request, $id);
@@ -62,7 +62,7 @@ class WaitlistController extends ApiController
         ]);
     }
 
-    /** POST /api/waitlist/{id}/reject · rechaza → vuelve a en_espera. */
+    
     public function reject(Request $request, string $id): JsonResponse
     {
         $entry = $this->own($request, $id);
@@ -76,7 +76,7 @@ class WaitlistController extends ApiController
         return $this->success($this->payload($entry->refresh()));
     }
 
-    /** POST /api/waitlist/{id}/offer · (worker) asigna cupo {date, time}. */
+    
     public function offer(OfferWaitlistRequest $request, string $id): JsonResponse
     {
         $entry = WaitlistEntry::find($id);
@@ -94,7 +94,7 @@ class WaitlistController extends ApiController
         return $this->success($this->payload($entry->refresh()));
     }
 
-    /** POST /api/waitlist/{id}/expire · (worker) oferta expirada → siguiente. */
+    
     public function expire(Request $request, string $id): JsonResponse
     {
         $entry = WaitlistEntry::find($id);

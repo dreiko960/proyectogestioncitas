@@ -19,7 +19,7 @@ class UpdateConsultorioRequest extends FormRequest
             'area' => ['sometimes', 'nullable', 'string', 'max:80'],
             'activo' => ['sometimes', 'boolean'],
             'specialtyIds' => ['sometimes', 'array'],
-            'specialtyIds.*' => ['uuid', 'exists:specialties,id'],
+            'specialtyIds.*' => ['uuid', 'exists:especialidades,id'],
         ];
     }
 }

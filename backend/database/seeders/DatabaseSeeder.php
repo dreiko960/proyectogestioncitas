@@ -8,20 +8,17 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Replica src/data/mock.js del prototipo (BACKEND.md §2.5).
-     * Solo dev/test. Contraseña de todos los usuarios demo: Demo1234.
-     */
+    
     public function run(): void
     {
         $now = now();
         $password = Hash::make('Demo1234');
 
-        // ---------------------------------------------------------------
-        // USERS (16): 5 pacientes + 8 médicos + enfermera + recepcionista
-        // + administrador. Los médicos tienen cuenta propia (doctors.user_id
-        // NOT NULL UNIQUE), por eso son 16 y no los "9 usuarios" del prototipo.
-        // ---------------------------------------------------------------
+        
+        
+        
+        
+        
         $users = [
             ['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Julia Mamani',            'email' => 'julia.mamani@gmail.com',    'role' => 'paciente'],
             ['id' => '00000000-0000-0000-0000-000000000002', 'name' => 'Carlos Huamán',          'email' => 'carlos.huaman@gmail.com',   'role' => 'paciente'],
@@ -42,7 +39,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($users as $u) {
-            DB::table('users')->insert([
+            DB::table('usuarios')->insert([
                 'id' => $u['id'],
                 'name' => $u['name'],
                 'email' => $u['email'],
@@ -55,9 +52,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // PATIENTS (5)
-        // ---------------------------------------------------------------
+        
+        
+        
         $patients = [
             ['id' => '10000000-0000-0000-0000-000000000001', 'user_id' => '00000000-0000-0000-0000-000000000001', 'dni' => '44231221', 'phone' => '966541203', 'dob' => '1992-03-14', 'address' => 'Jr. Los Álamos 245, Ayacucho'],
             ['id' => '10000000-0000-0000-0000-000000000002', 'user_id' => '00000000-0000-0000-0000-000000000002', 'dni' => '45322109', 'phone' => '983112456', 'dob' => '1988-11-02', 'address' => 'Av. Independencia 812, Ayacucho'],
@@ -67,7 +64,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($patients as $p) {
-            DB::table('patients')->insert([
+            DB::table('pacientes')->insert([
                 'id' => $p['id'],
                 'user_id' => $p['user_id'],
                 'dni' => $p['dni'],
@@ -80,9 +77,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // SPECIALTIES (7) — precios del prototipo
-        // ---------------------------------------------------------------
+        
+        
+        
         $specialties = [
             ['id' => '20000000-0000-0000-0000-000000000001', 'code' => 'medicina',     'name' => 'Medicina General', 'icon' => 'stethoscope', 'price' => 60.00, 'desc' => 'Atención integral de salud del adulto'],
             ['id' => '20000000-0000-0000-0000-000000000002', 'code' => 'pediatria',    'name' => 'Pediatría',        'icon' => 'baby',         'price' => 70.00, 'desc' => 'Salud de niños y adolescentes'],
@@ -94,7 +91,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($specialties as $s) {
-            DB::table('specialties')->insert([
+            DB::table('especialidades')->insert([
                 'id' => $s['id'],
                 'code' => $s['code'],
                 'name' => $s['name'],
@@ -105,9 +102,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // CONSULTORIOS (5) + especialidades asociadas (M:N)
-        // ---------------------------------------------------------------
+        
+        
+        
         $consultorios = [
             ['id' => '30000000-0000-0000-0000-000000000001', 'nombre' => 'Consultorio 1', 'piso' => '1', 'area' => 'Medicina General y Odontología'],
             ['id' => '30000000-0000-0000-0000-000000000002', 'nombre' => 'Consultorio 2', 'piso' => '1', 'area' => 'Medicina General'],
@@ -138,15 +135,15 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($consultorioSpecialties as [$consultorioId, $specialtyId]) {
-            DB::table('consultorio_specialties')->insert([
+            DB::table('consultorio_especialidad')->insert([
                 'consultorio_id' => $consultorioId,
                 'specialty_id' => $specialtyId,
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // DOCTORS (8)
-        // ---------------------------------------------------------------
+        
+        
+        
         $doctors = [
             ['id' => '40000000-0000-0000-0000-000000000001', 'user_id' => '00000000-0000-0000-0000-000000000006', 'initials' => 'RQ', 'specialty_id' => '20000000-0000-0000-0000-000000000001', 'consultorio_id' => '30000000-0000-0000-0000-000000000002', 'phone' => '966000001', 'bio' => 'Médica general con 12 años de experiencia en atención primaria.', 'rating' => 4.80, 'rating_count' => 214, 'studies' => 'UNMSM', 'exp' => 12],
             ['id' => '40000000-0000-0000-0000-000000000002', 'user_id' => '00000000-0000-0000-0000-000000000007', 'initials' => 'CM', 'specialty_id' => '20000000-0000-0000-0000-000000000001', 'consultorio_id' => '30000000-0000-0000-0000-000000000001', 'phone' => '966000002', 'bio' => 'Médico general, especialista en medicina familiar.', 'rating' => 4.60, 'rating_count' => 167, 'studies' => 'UNSAAC', 'exp' => 9],
@@ -159,7 +156,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($doctors as $d) {
-            DB::table('doctors')->insert([
+            DB::table('doctores')->insert([
                 'id' => $d['id'],
                 'user_id' => $d['user_id'],
                 'initials' => $d['initials'],
@@ -175,12 +172,12 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // DOCTOR_SCHEDULES · plantilla semanal Lun–Vie 08:00–12:00
-        // ---------------------------------------------------------------
+        
+        
+        
         foreach ($doctors as $d) {
             for ($day = 1; $day <= 5; $day++) {
-                DB::table('doctor_schedules')->insert([
+                DB::table('horarios_doctores')->insert([
                     'doctor_id' => $d['id'],
                     'day_of_week' => $day,
                     'start_time' => '08:00:00',
@@ -189,20 +186,20 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ---------------------------------------------------------------
-        // DOCTOR_DATE_EXCEPTIONS · cardiología sin cupos el 2026-08-05
-        // (caso demo: /api/availability?specialtyId=cardiologia → vacío)
-        // ---------------------------------------------------------------
-        DB::table('doctor_date_exceptions')->insert([
+        
+        
+        
+        
+        DB::table('excepciones_doctores')->insert([
             'doctor_id' => '40000000-0000-0000-0000-000000000004',
             'date' => '2026-08-05',
             'reason' => 'Capacitación externa',
         ]);
 
-        // ---------------------------------------------------------------
-        // APPOINTMENTS (6): 3 del día 2026-08-05 con turnos A-001…A-003,
-        // 2 atendidas con historial, 1 futura agendada
-        // ---------------------------------------------------------------
+        
+        
+        
+        
         $appointments = [
             [
                 'id' => '50000000-0000-0000-0000-000000000001', 'code' => 'C-1041', 'patient_id' => '10000000-0000-0000-0000-000000000001',
@@ -243,7 +240,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($appointments as $a) {
-            DB::table('appointments')->insert([
+            DB::table('citas')->insert([
                 'id' => $a['id'],
                 'code' => $a['code'],
                 'patient_id' => $a['patient_id'],
@@ -262,11 +259,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // TRIAGES (3) · solo citas con triaje completado/histórico
-        // (una cita en 'en_triaje' aún no registra signos: se insertan al
-        // completar el triaje, ver §5.7)
-        // ---------------------------------------------------------------
+        
+        
+        
+        
+        
         $triages = [
             ['appointment_id' => '50000000-0000-0000-0000-000000000003', 'pa' => '110/70', 'temp' => 36.5, 'fc' => 72, 'peso' => 55.2, 'talla' => 1.60, 'motivo' => 'Chequeo general anual', 'alergias' => null, 'at' => '2026-08-05 09:45:00'],
             ['appointment_id' => '50000000-0000-0000-0000-000000000004', 'pa' => '130/85', 'temp' => 38.2, 'fc' => 92, 'peso' => 64.0, 'talla' => 1.65, 'motivo' => 'Fiebre de 3 días', 'alergias' => null, 'at' => '2026-07-20 09:00:00'],
@@ -274,7 +271,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($triages as $t) {
-            DB::table('triages')->insert([
+            DB::table('triajes')->insert([
                 'appointment_id' => $t['appointment_id'],
                 'nurse_id' => '00000000-0000-0000-0000-000000000014',
                 'pa' => $t['pa'],
@@ -288,16 +285,16 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // DIAGNOSES (2) · histórico atendido
-        // ---------------------------------------------------------------
+        
+        
+        
         $diagnoses = [
             ['appointment_id' => '50000000-0000-0000-0000-000000000004', 'doctor_id' => '00000000-0000-0000-0000-000000000006', 'dx' => 'Infección respiratoria aguda', 'notes' => 'Antibiótico por 7 días, reposo e hidratación.', 'at' => '2026-07-20 09:35:00'],
             ['appointment_id' => '50000000-0000-0000-0000-000000000005', 'doctor_id' => '00000000-0000-0000-0000-000000000008', 'dx' => 'Control de crecimiento normal', 'notes' => 'Peso y talla dentro de percentiles esperados.', 'at' => '2026-07-22 11:00:00'],
         ];
 
         foreach ($diagnoses as $dx) {
-            DB::table('diagnoses')->insert([
+            DB::table('diagnosticos')->insert([
                 'appointment_id' => $dx['appointment_id'],
                 'doctor_id' => $dx['doctor_id'],
                 'dx' => $dx['dx'],
@@ -306,9 +303,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // PAYMENTS (5) · caja + pasarela (Culqi)
-        // ---------------------------------------------------------------
+        
+        
+        
         $payments = [
             ['id' => '60000000-0000-0000-0000-000000000001', 'code' => 'P-0813', 'appointment_id' => '50000000-0000-0000-0000-000000000001', 'patient_id' => '10000000-0000-0000-0000-000000000001', 'amount' => 30.00, 'method' => 'tarjeta_pasarela', 'status' => 'pagado', 'paid_type' => 'adelanto', 'receipt_code' => 'R-2026-0813', 'verified_by' => null, 'gateway' => true, 'culqi_order_id' => 'order_demo_0813', 'culqi_charge_id' => 'charge_demo_0813', 'created_at' => $now->subDays(3)],
             ['id' => '60000000-0000-0000-0000-000000000002', 'code' => 'P-0814', 'appointment_id' => '50000000-0000-0000-0000-000000000002', 'patient_id' => '10000000-0000-0000-0000-000000000002', 'amount' => 60.00, 'method' => 'yape', 'status' => 'pagado', 'paid_type' => 'total', 'receipt_code' => 'R-2026-0814', 'verified_by' => '00000000-0000-0000-0000-000000000015', 'gateway' => false, 'culqi_order_id' => null, 'culqi_charge_id' => null, 'created_at' => $now->subDays(1)],
@@ -318,7 +315,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($payments as $p) {
-            DB::table('payments')->insert([
+            DB::table('pagos')->insert([
                 'id' => $p['id'],
                 'code' => $p['code'],
                 'appointment_id' => $p['appointment_id'],
@@ -336,9 +333,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // WAITLIST_ENTRIES (3) · lista de espera del módulo del paciente
-        // ---------------------------------------------------------------
+        
+        
+        
         $waitlist = [
             ['id' => '70000000-0000-0000-0000-000000000001', 'code' => 'WL-008', 'patient_id' => '10000000-0000-0000-0000-000000000004', 'specialty_id' => '20000000-0000-0000-0000-000000000003', 'doctor_id' => '40000000-0000-0000-0000-000000000004', 'preferred' => 'Preferencia por las mañanas', 'position' => 1, 'status' => 'en_espera', 'enrolled_at' => $now->subDays(2)],
             ['id' => '70000000-0000-0000-0000-000000000002', 'code' => 'WL-009', 'patient_id' => '10000000-0000-0000-0000-000000000005', 'specialty_id' => '20000000-0000-0000-0000-000000000004', 'doctor_id' => '40000000-0000-0000-0000-000000000005', 'preferred' => null, 'position' => 1, 'status' => 'en_espera', 'enrolled_at' => $now->subDays(1)],
@@ -346,7 +343,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($waitlist as $w) {
-            DB::table('waitlist_entries')->insert([
+            DB::table('lista_espera')->insert([
                 'id' => $w['id'],
                 'code' => $w['code'],
                 'patient_id' => $w['patient_id'],
@@ -363,9 +360,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ---------------------------------------------------------------
-        // AUDIT_LOG (5) · muestra de eventos reales
-        // ---------------------------------------------------------------
+        
+        
+        
         $audit = [
             ['email' => 'julia.mamani@gmail.com',   'action' => 'login',            'detail' => 'Inicio de sesión exitoso',              'sev' => 'info',    'route' => '/api/auth/login',                    'method' => 'POST',   'at' => $now->subHours(3)],
             ['email' => 'julia.mamani@gmail.com',   'action' => 'Cita creada',      'detail' => 'C-1041 · Dra. Rosa Quispe · 2026-08-05', 'sev' => 'info',    'route' => '/api/appointments',                  'method' => 'POST',   'at' => $now->subDays(3)],
@@ -375,7 +372,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($audit as $a) {
-            DB::table('audit_log')->insert([
+            DB::table('registro_auditoria')->insert([
                 'at' => $a['at'],
                 'email' => $a['email'],
                 'action' => $a['action'],

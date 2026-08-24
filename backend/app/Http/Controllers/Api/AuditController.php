@@ -7,7 +7,7 @@ use App\Models\AuditLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Registro de auditoría (BACKEND.md §5.10). */
+
 class AuditController extends ApiController
 {
     public function index(Request $request): JsonResponse

@@ -8,7 +8,7 @@ use App\Models\Payment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Webhook de Culqi (BACKEND.md §7.2): público, firma HMAC v2, idempotente. */
+
 class WebhookController extends ApiController
 {
     public function handle(Request $request): JsonResponse

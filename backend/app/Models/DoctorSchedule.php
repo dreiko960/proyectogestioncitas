@@ -10,6 +10,8 @@ class DoctorSchedule extends Model
 {
     use HasUuids;
 
+    protected $table = 'horarios_doctores';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -7,7 +7,7 @@ use App\Models\UserNotice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Avisos del usuario (topbar) — BACKEND.md §5.10. */
+
 class NoticeController extends ApiController
 {
     public function me(Request $request): JsonResponse

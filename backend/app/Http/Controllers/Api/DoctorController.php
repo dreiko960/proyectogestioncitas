@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-/** Catálogo de médicos, plantillas semanales y franjas libres (BACKEND.md §5.3). */
+
 class DoctorController extends ApiController
 {
     public function __construct(private readonly AppointmentService $appointments) {}
@@ -39,7 +39,7 @@ class DoctorController extends ApiController
         return $this->success($this->payload($doctor));
     }
 
-    /** Franjas libres (cache 30 s) — BACKEND.md §5.3. */
+    
     public function slots(Request $request, string $id): JsonResponse
     {
         $doctor = Doctor::with(['specialty', 'schedules', 'exceptions'])->find($id);
@@ -63,7 +63,7 @@ class DoctorController extends ApiController
         ]);
     }
 
-    /** Plantilla semanal (reemplaza las franjas del médico). */
+    
     public function storeSchedules(StoreDoctorScheduleRequest $request, string $id): JsonResponse
     {
         $doctor = $this->resolvableDoctor($request, $id);
@@ -81,7 +81,7 @@ class DoctorController extends ApiController
         ], 201);
     }
 
-    /** Día bloqueado (vacaciones, ausencia puntual). */
+    
     public function storeException(StoreDoctorExceptionRequest $request, string $id): JsonResponse
     {
         $doctor = $this->resolvableDoctor($request, $id);

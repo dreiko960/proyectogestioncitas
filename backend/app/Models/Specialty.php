@@ -11,6 +11,8 @@ class Specialty extends Model
 {
     use HasUuids;
 
+    protected $table = 'especialidades';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -38,6 +40,6 @@ class Specialty extends Model
 
     public function consultorios(): BelongsToMany
     {
-        return $this->belongsToMany(Consultorio::class, 'consultorio_specialties');
+        return $this->belongsToMany(Consultorio::class, 'consultorio_especialidad', 'specialty_id', 'consultorio_id');
     }
 }

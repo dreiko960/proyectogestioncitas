@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateSpecialtyRequest;
 use App\Models\Specialty;
 use Illuminate\Http\JsonResponse;
 
-/** Catálogo de especialidades (BACKEND.md §5.3). */
+
 class SpecialtyController extends ApiController
 {
     public function index(): JsonResponse

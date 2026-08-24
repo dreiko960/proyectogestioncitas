@@ -12,7 +12,7 @@ class UserNotice extends Model
 
     public $timestamps = false;
 
-    protected $table = 'user_notices';
+    protected $table = 'avisos_usuarios';
 
     protected $fillable = [
         'id',

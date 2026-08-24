@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpFoundation\Response;
 
-/** Permite acceso por token de TV (solo lectura) o por Sanctum autenticado. */
+
 class TvOrSanctum
 {
     public function handle(Request $request, Closure $next): Response
@@ -23,7 +23,7 @@ class TvOrSanctum
                     return $next($request);
                 }
             } catch (\Throwable) {
-                // firma inválida → cae al 401
+                
             }
 
             abort(401, 'No autenticado');

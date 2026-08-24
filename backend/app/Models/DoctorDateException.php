@@ -10,6 +10,8 @@ class DoctorDateException extends Model
 {
     use HasUuids;
 
+    protected $table = 'excepciones_doctores';
+
     public $timestamps = false;
 
     protected $fillable = [

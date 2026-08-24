@@ -13,12 +13,12 @@ use App\Support\QueueBroadcaster;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Triaje de enfermería (BACKEND.md §5.7). */
+
 class TriageController extends ApiController
 {
     public function __construct(private readonly AppointmentService $appointments) {}
 
-    /** GET /api/triage/queue · en_espera_triaje por tiempo de espera + en progreso. */
+    
     public function queue(): JsonResponse
     {
         $waiting = Appointment::with(['patient.user', 'doctor.user'])
@@ -39,7 +39,7 @@ class TriageController extends ApiController
         ]);
     }
 
-    /** GET /api/triage/history?date= · triajes del turno. */
+    
     public function history(Request $request): JsonResponse
     {
         $date = $request->query('date', now()->toDateString());
@@ -74,7 +74,7 @@ class TriageController extends ApiController
         ]);
     }
 
-    /** POST /api/triage/{appointment} · inicia triaje → en_triaje. */
+    
     public function start(StartTriageRequest $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);
@@ -101,7 +101,7 @@ class TriageController extends ApiController
         ], 201);
     }
 
-    /** PATCH /api/triage/{appointment}/complete · guarda signos vitales → triaje_completado. */
+    
     public function complete(CompleteTriageRequest $request, string $id): JsonResponse
     {
         $appointment = $this->find($id);

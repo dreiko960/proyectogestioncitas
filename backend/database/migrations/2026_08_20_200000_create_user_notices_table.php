@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Avisos del topbar (recordatorios/notificaciones) — BACKEND.md §5.10.
-        Schema::create('user_notices', function (Blueprint $table) {
+        
+        Schema::create('avisos_usuarios', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
             $table->string('title', 160);
@@ -17,13 +17,13 @@ return new class extends Migration
             $table->timestampTz('read_at')->nullable();
             $table->timestampTz('created_at')->useCurrent();
 
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('usuarios')->cascadeOnDelete();
             $table->index(['user_id', 'read_at']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('user_notices');
+        Schema::dropIfExists('avisos_usuarios');
     }
 };

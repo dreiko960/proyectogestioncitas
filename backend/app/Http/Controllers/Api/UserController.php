@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/** Gestión de usuarios del panel admin (BACKEND.md §5.2). */
+
 class UserController extends ApiController
 {
     public function index(Request $request): JsonResponse

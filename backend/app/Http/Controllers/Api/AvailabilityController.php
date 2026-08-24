@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** Disponibilidad pública: cruza plantillas con citas activas (BACKEND.md §5.4). */
+
 class AvailabilityController extends ApiController
 {
     public function __construct(private readonly AppointmentService $appointments) {}

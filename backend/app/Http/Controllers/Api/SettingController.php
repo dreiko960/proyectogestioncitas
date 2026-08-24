@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateSettingsRequest;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 
-/** Reglas de negocio configurables (BACKEND.md §5.10). */
+
 class SettingController extends ApiController
 {
     private const KEYS = [

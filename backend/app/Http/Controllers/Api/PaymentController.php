@@ -18,12 +18,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-/** Pagos: caja + Culqi (BACKEND.md §5.6). */
+
 class PaymentController extends ApiController
 {
     public function __construct(private readonly PaymentService $payments) {}
 
-    /** POST /api/payments/charge · cobro Culqi desde el paciente. */
+    
     public function charge(ChargePaymentRequest $request): JsonResponse
     {
         $appointment = $this->ownAppointment($request, $request->validated('appointmentId'));
@@ -47,7 +47,7 @@ class PaymentController extends ApiController
         return $this->success($this->payload($payment->refresh()));
     }
 
-    /** POST /api/payments/cash · cobro en caja con comprobante. */
+    
     public function cash(CashPaymentRequest $request): JsonResponse
     {
         $appointment = Appointment::find($request->validated('appointmentId'));
@@ -66,7 +66,7 @@ class PaymentController extends ApiController
         return $this->success($this->payload($payment->refresh()));
     }
 
-    /** POST /api/payments/verify · recepción confirma pago declarado por el paciente. */
+    
     public function verify(VerifyPaymentRequest $request): JsonResponse
     {
         $payment = Payment::find($request->validated('paymentId'));
@@ -84,7 +84,7 @@ class PaymentController extends ApiController
         return $this->success($this->payload($payment->refresh()));
     }
 
-    /** POST /api/payments/complete-balance · cobra el saldo del 50% en recepción. */
+    
     public function completeBalance(CompleteBalanceRequest $request): JsonResponse
     {
         $appointment = Appointment::find($request->validated('appointmentId'));
@@ -106,7 +106,7 @@ class PaymentController extends ApiController
         return $this->success($this->payload($payment->refresh()));
     }
 
-    /** POST /api/payments/{id}/refund · reembolso Culqi (admin). */
+    
     public function refund(Request $request, string $id): JsonResponse
     {
         $payment = Payment::find($id);
@@ -124,7 +124,7 @@ class PaymentController extends ApiController
         return $this->success($this->payload($payment->refresh()));
     }
 
-    /** GET /api/payments/receipts/{id} · comprobante en PDF. */
+    
     public function receipt(string $id): JsonResponse
     {
         $payment = Payment::with(['appointment.patient.user', 'appointment.doctor.user', 'appointment.specialty'])->find($id);

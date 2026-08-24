@@ -10,6 +10,7 @@ use App\Enums\UserRole;
 use App\Exceptions\SlotConflictException;
 use App\Models\Appointment;
 use App\Models\AppointmentStatusLog;
+use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\DoctorSchedule;
 use App\Models\Patient;
@@ -22,11 +23,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Núcleo de citas (BACKEND.md §5.5) y reglas de negocio críticas (§6).
- * La reserva es atómica: bloqueo de franja (Opción A) + constraint no_double_booking
- * (Opción B) con reintento y alternativas (409).
- */
+
 class AppointmentService
 {
     public const SLOT_MINUTES = 30;
@@ -62,7 +59,7 @@ class AppointmentService
                 }
 
                 $appointment = Appointment::create([
-                    'code' => Codes::next('appointments', 'C'),
+                    'code' => Codes::next('citas', 'C'),
                     'patient_id' => $patient->id,
                     'doctor_id' => $doctor->id,
                     'specialty_id' => $specialty->id,
@@ -80,7 +77,7 @@ class AppointmentService
                 return $appointment;
             });
         } catch (QueryException $e) {
-            // 23505 = unique violation de no_double_booking (carrera entre transacciones)
+            
             if ($e->getCode() === '23505') {
                 throw new SlotConflictException($this->alternatives($doctor, $date, $time));
             }
@@ -103,7 +100,7 @@ class AppointmentService
         return $appointment->refresh();
     }
 
-    /** Franjas libres del médico entre dos fechas (BACKEND.md §5.3 slots, §5.4 availability). */
+    
     public function freeSlots(Doctor $doctor, Carbon $from, Carbon $to): array
     {
         $slots = [];
@@ -139,7 +136,7 @@ class AppointmentService
         return $slots;
     }
 
-    /** Próximos cupos libres tras un conflicto (modal "Este horario ya no está disponible"). */
+    
     public function alternatives(Doctor $doctor, Carbon $date, string $time, int $count = 3): array
     {
         $from = $date->copy()->setTimeFromTimeString($time);
@@ -152,7 +149,29 @@ class AppointmentService
             ->all();
     }
 
-    /** Check-in móvil: solo agendada/pagada (BACKEND.md §5.5). */
+    
+    public function saveDiagnosis(Appointment $appointment, string $dx, ?string $notes, ?User $by = null): Appointment
+    {
+        if ($appointment->status !== AppointmentStatus::EnAtencion) {
+            throw new \InvalidArgumentException('El diagnóstico solo se registra en una cita en atención');
+        }
+
+        return DB::transaction(function () use ($appointment, $dx, $notes, $by) {
+            $diagnosis = Diagnosis::query()->firstOrNew(['appointment_id' => $appointment->id]);
+            $diagnosis->doctor_id = $by?->id;
+            $diagnosis->dx = $dx;
+            $diagnosis->notes = $notes;
+            $diagnosis->at = now();
+            $diagnosis->save();
+
+            $this->transition($appointment, AppointmentStatus::Documentada, $by);
+            $this->audit->record($by, 'Diagnóstico registrado', "{$appointment->code}", AuditSev::Info);
+
+            return $appointment->refresh();
+        });
+    }
+
+    
     public function checkIn(Appointment $appointment, ?User $by = null): Appointment
     {
         $this->transition($appointment, AppointmentStatus::CheckIn, $by);
@@ -162,7 +181,7 @@ class AppointmentService
         return $appointment->refresh();
     }
 
-    /** Check-in presencial: asigna turno A-XXX y pasa a en_espera_triaje (§2.4). */
+    
     public function sendToTriage(Appointment $appointment, ?User $by = null): Appointment
     {
         if (! in_array($appointment->status, [AppointmentStatus::Pagada, AppointmentStatus::CheckIn], true)) {
@@ -183,7 +202,7 @@ class AppointmentService
         });
     }
 
-    /** Cancelación con regla de 12 h (§6.3): devuelve warning si es tardía. */
+    
     public function cancel(Appointment $appointment, string $reason, ?User $by = null): array
     {
         if (! in_array($appointment->status, [
@@ -217,7 +236,7 @@ class AppointmentService
         return ['warning' => $late];
     }
 
-    /** Reprogramación: valida franja libre, marca reprogramada y guarda la fecha anterior. */
+    
     public function reschedule(Appointment $appointment, string $newDate, string $newTime, ?User $by = null): Appointment
     {
         $date = Carbon::parse($newDate);
@@ -267,7 +286,7 @@ class AppointmentService
 
     public function nextTurno(Carbon $date): string
     {
-        $max = DB::table('appointments')
+        $max = DB::table('citas')
             ->whereDate('date', $date->toDateString())
             ->whereNotNull('turno')
             ->max('turno');
@@ -300,7 +319,7 @@ class AppointmentService
             ->all();
     }
 
-    /** Bloqueo de la fila de la franja (Opción A, §2.3). */
+    
     private function lockSlot(Doctor $doctor, Carbon $date, string $time): void
     {
         DoctorSchedule::query()
@@ -389,7 +408,7 @@ class AppointmentService
         }
     }
 
-    /** Mapa de transiciones válidas (§6.1). */
+    
     private function allowedTransitions(AppointmentStatus $from): Collection
     {
         return match ($from) {

@@ -16,6 +16,17 @@ FROM php:8.3-fpm-alpine AS runtime
 
 RUN apk add --no-cache \
         libpq \
+        icu-libs \
+        libpng \
+        libjpeg-turbo \
+        freetype \
+        libzip \
+        oniguruma \
+        autoconf \
+        g++ \
+        make \
+        pkgconf \
+        postgresql-dev \
         icu-dev \
         libpng-dev \
         libjpeg-turbo-dev \
@@ -33,7 +44,9 @@ RUN apk add --no-cache \
         mbstring \
         zip \
         bcmath \
-    && apk del icu-dev libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev oniguruma-dev
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del icu-dev libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev oniguruma-dev postgresql-dev autoconf g++ make pkgconf
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -43,7 +56,8 @@ COPY . .
 
 COPY --from=vendor /app/vendor ./vendor
 
-RUN mkdir -p storage/framework/{sessions,views,cache} \
+RUN composer dump-autoload --no-dev --optimize \
+    && mkdir -p storage/framework/{sessions,views,cache} \
     && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 8000 8080
